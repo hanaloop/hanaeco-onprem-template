@@ -1,0 +1,78 @@
+static_resources:
+
+  listeners:
+  - name: listener_ecoloop
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 80
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          http_filters:
+          - name: envoy.filters.http.router
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/proxy-test"
+                direct_response:
+                  status: 200
+                  body:
+                    inline_string: "Envoy: Ecoloop"
+              - match:
+                  prefix: "/bapi/"
+                route:
+                  timeout: 120s
+                  prefix_rewrite: "/"
+                  cluster: ecoloop-server
+              - match:
+                  prefix: "/"
+                route:
+                  prefix_rewrite: "/"
+                  # host_rewrite_literal: api-portal.net
+                  cluster: ecoloop-web
+  clusters:
+  - name: ecoloop-web
+    connect_timeout: 120s
+    type: STRICT_DNS
+    # type: STATIC
+    # Comment out the following line to test on v6 networks
+    dns_lookup_family: V4_ONLY
+    load_assignment:
+      cluster_name: ecoloop-web
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: ecoloop-web
+                port_value: 80
+  - name: ecoloop-server
+    connect_timeout: 60s
+    type: STRICT_DNS
+    # type: STATIC
+    # Comment out the following line to test on v6 networks
+    dns_lookup_family: V4_ONLY
+    load_assignment:
+      cluster_name: ecoloop-server
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: ecoloop-server
+                port_value: 3000
+
+
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address: { address: 127.0.0.1, port_value: 9901 }
+

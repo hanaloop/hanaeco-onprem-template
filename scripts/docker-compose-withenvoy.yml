@@ -1,0 +1,93 @@
+# THIS IS THE ONE USED
+# NOTE: Those values expressed as variables - ${VARNAME} - are set from OS env or from .env.docker-compose-onprem
+version: '3.7'
+
+services:
+  envoy:
+    container_name: ecoloop-envoy-onprem
+    image: envoyproxy/envoy-dev:a240824c376693b16ca8be51e435b95c42f3449f
+    depends_on:
+      - ecoloop-web
+      - ecoloop-server
+    networks:
+      - app_network
+    ports:
+      - "9901:9901"
+      - "${PROXY_EXPOSE_PORT}:80"
+    volumes:
+      - ${ENVOY_FILE}:/etc/envoy/envoy.yaml
+
+  ecoloop-server:
+    container_name: ecoloop-server-onprem
+    image: ${ECOLOOP_SERVER_IMAGE}
+    volumes:
+      # - /home/zeroap/temp:.
+      - ${STORAGE_LOCATION_ROOT}:${STORAGE_LOCATION_ROOT}
+    ports:
+      - ${ECOLOOP_SERVER_EXPOSE_PORT}:3000
+    command: >
+      sh -c "./wait-for.sh postgres:5432 -- yarn prisma migrate deploy
+      && yarn start:prod"
+    env_file:
+      - .env.docker-server
+    environment:
+      # PORT: 80
+      NODE_ENV: ${SERVER_NODE_ENV}
+      CIPHER_KEY: ${CIPHER_KEY}
+      STORAGE_LOCATION_ROOT: ${STORAGE_LOCATION_ROOT}
+      HL_DISABLE_GENAI: true
+      # IMPORT_FILE_PATTERN: ${IMPORT_FILE_PATTERN}
+      # IMPORT_FILE_PATTERN_EXCL: ${IMPORT_FILE_PATTERN_EXCL}
+    networks:
+      - app_network
+    depends_on:
+      - postgres
+      - ecoloop-ml
+  
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: postgres-onprem
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --lc-collate=C --lc-ctype=C'
+      PG_DATA: /var/lib/postgresql/data
+    networks:
+      - app_network
+    ports:
+      - 5432:5432
+    volumes:
+      - ${DBDATA_LOCATION_ROOT}:/var/lib/postgresql/data
+  
+  ecoloop-ml:
+    image: hanalooper/ecoloop-ml:latest
+    container_name: ecoloop-ml-onprem
+    ports:
+      - ${ECOLOOP_ML_EXPOSE_PORT}:80
+    networks:
+      - app_network
+
+  ecoloop-web:
+    container_name: ecoloop-web-onprem
+    image: ${ECOLOOP_WEB_IMAGE}
+    env_file:
+      - .env.docker-web
+    environment:
+      PORT: 80
+    #   AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
+    #   BAPI_BASE_URL: ${BAPI_BASE_URL}
+    #   NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    #   NODE_ENV: ${NODE_ENV}
+
+    networks:
+      - app_network
+    ports:
+      - ${ECOLOOP_WEB_EXPOSE_PORT}:80
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  pgdata_onprem:

@@ -1,0 +1,27 @@
+# Site's general info
+site_name: 2023 - hanaeco-onprem-template 
+site_description: Documentation
+site_url: https://localhost:8000
+site_dir: target/mkdocs
+
+theme: readthedocs
+
+markdown_extensions:
+  - admonition
+
+# Repo info for editing
+repo_name: GitLab
+repo_url: [TBD]
+edit_uri: edit/master/docs/
+# Not needed for GitLab
+
+# Navigation
+nav:
+  - 홈: index.md
+  - Hana.eco Spec and Deployment Plan: hanaeco_spec.md
+  - 배경:
+    - 요구사항: context/requirements.md
+    - IT인프라: context/it_infrastructure.md
+  - 프로젝트:
+    - Activity Log: engagement/activity_log
+    - Technical Findings: engagement/technical_findings
