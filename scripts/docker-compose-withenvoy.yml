@@ -35,9 +35,8 @@ services:
       NODE_ENV: ${SERVER_NODE_ENV}
       CIPHER_KEY: ${CIPHER_KEY}
       STORAGE_LOCATION_ROOT: ${STORAGE_LOCATION_ROOT}
-      HL_DISABLE_GENAI: true
-      # IMPORT_FILE_PATTERN: ${IMPORT_FILE_PATTERN}
-      # IMPORT_FILE_PATTERN_EXCL: ${IMPORT_FILE_PATTERN_EXCL}
+      LLM_OPENAPI_API_KEY: ${OPENAI_API_KEY}
+      HL_DISABLE_GENAI: false
     networks:
       - app_network
     depends_on:
@@ -63,6 +62,10 @@ services:
   ecoloop-ml:
     image: hanalooper/ecoloop-ml:latest
     container_name: ecoloop-ml-onprem
+    environment:
+      PORT: "80"
+      SERVER_BAPI: http://ecoloop-server-onprem:3000
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     ports:
       - ${ECOLOOP_ML_EXPOSE_PORT}:80
     networks:

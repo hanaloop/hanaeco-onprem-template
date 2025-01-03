@@ -27,7 +27,7 @@ And to use chatbot, OpenAI key is needed.
 ## Configuration
 
 Modify `/scripts/.env.docker-compose-onprem` file according to your environment:
- 
+
 - `AUTH0_ISSUER_URL`  The IDP provider's URL
 - `ECOLOOP_WEB_IMAGE` The Hanaeco web server docker image name with the proper version
 - `ECOLOOP_SERVER_IMAGE` The Hanaeco backend server docker image name with the proper version
@@ -58,4 +58,29 @@ Go to `/scripts`
 
 ```sh
 ./services-down.sh
+```
+
+
+#### Deploying
+
+Once the configuration were properly set, modify the services-up.sh by assigning values to
+`OPENAI_API_KEY` `CIPHER_KEY` `DB_PASSWORD` or setting as environment.
+
+```sh
+OPENAI_API_KEY=<OPENAI_KEY> CIPHER_KEY=<CIPHER_KEY> DB_PASSWORD=<DBPWD> docker-compose --env-file .env.docker-compose -f docker-compose-withenvoy.yml up
+```
+
+Where 
+- <OPENAI_KEY> is the OpenAI's API key.
+- <CIPHER_KEY> is some secret key for the encryption.
+- <DBPWD> is the password to be used for initial db creation.
+
+To verify from the same local computer that the services have been successfully deployed:
+
+```sh
+# Verify server is up
+curl localhost/bapi/info
+
+# Verify web is up
+curl localhost/api/info
 ```

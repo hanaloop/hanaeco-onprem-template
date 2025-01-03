@@ -7,4 +7,6 @@ The system is compatible with deployment on both ARM and x86 platforms. Ensure t
 
 1. [ ] Install git
 2. [ ] Install docker-compose
-3. [ ] Install docker-compose
+3. [ ] clone repo
+4. [ ] Configure accordingly
+5. [ ] test run
