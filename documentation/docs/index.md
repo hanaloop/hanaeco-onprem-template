@@ -32,6 +32,7 @@ Modify `/scripts/.env.docker-compose-onprem` file according to your environment:
 - `ECOLOOP_WEB_IMAGE` The Hanaeco web server docker image name with the proper version
 - `ECOLOOP_SERVER_IMAGE` The Hanaeco backend server docker image name with the proper version
 - `STORAGE_LOCATION_ROOT` The absolute path where the updated file will be stored (need full write access)
+- `SEED_DATA_CONNECTORS_LOCATION`
 - `ECOLOOP_ML_IMAGE`  The Hanaeco machine learning docker image
 - `OPENAI_API_KEY` The OpenAI key for chat
 

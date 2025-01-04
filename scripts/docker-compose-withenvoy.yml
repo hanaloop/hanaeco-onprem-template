@@ -21,7 +21,7 @@ services:
     container_name: ecoloop-server-onprem
     image: ${ECOLOOP_SERVER_IMAGE}
     volumes:
-      # - /home/zeroap/temp:.
+      - ${SEED_DATA_CONNECTORS_LOCATION}:./seed-data/connector
       - ${STORAGE_LOCATION_ROOT}:${STORAGE_LOCATION_ROOT}
     ports:
       - ${ECOLOOP_SERVER_EXPOSE_PORT}:3000
