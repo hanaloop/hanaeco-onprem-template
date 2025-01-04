@@ -21,7 +21,7 @@ services:
     container_name: ecoloop-server-onprem
     image: ${ECOLOOP_SERVER_IMAGE}
     volumes:
-      - ${SEED_DATA_CONNECTORS_LOCATION}:./seed-data/connector
+      - ${SEED_DATA_CONNECTORS_LOCATION}:/usr/src/app/seed-data/connectors
       - ${STORAGE_LOCATION_ROOT}:${STORAGE_LOCATION_ROOT}
     ports:
       - ${ECOLOOP_SERVER_EXPOSE_PORT}:3000
@@ -36,7 +36,7 @@ services:
       CIPHER_KEY: ${CIPHER_KEY}
       STORAGE_LOCATION_ROOT: ${STORAGE_LOCATION_ROOT}
       LLM_OPENAPI_API_KEY: ${OPENAI_API_KEY}
-      HL_DISABLE_GENAI: false
+      HL_DISABLE_GENAI: "false"
     networks:
       - app_network
     depends_on:

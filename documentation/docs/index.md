@@ -31,8 +31,9 @@ Modify `/scripts/.env.docker-compose-onprem` file according to your environment:
 - `AUTH0_ISSUER_URL`  The IDP provider's URL
 - `ECOLOOP_WEB_IMAGE` The Hanaeco web server docker image name with the proper version
 - `ECOLOOP_SERVER_IMAGE` The Hanaeco backend server docker image name with the proper version
+- `DBDATA_LOCATION_ROOT`  The absolute path where the database (Postgres) persistent files are stored
 - `STORAGE_LOCATION_ROOT` The absolute path where the updated file will be stored (need full write access)
-- `SEED_DATA_CONNECTORS_LOCATION`
+- `SEED_DATA_CONNECTORS_LOCATION` 
 - `ECOLOOP_ML_IMAGE`  The Hanaeco machine learning docker image
 - `OPENAI_API_KEY` The OpenAI key for chat
 
