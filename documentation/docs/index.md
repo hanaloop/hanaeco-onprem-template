@@ -52,6 +52,11 @@ Prior starting the applications, make sure:
 Go to `/scripts`
 
 ```sh
+
+export OPENAI_API_KEY= 
+export CIPHER_KEY= 
+export DB_PASSWORD=
+
 ./services-up.sh
 ```
 
