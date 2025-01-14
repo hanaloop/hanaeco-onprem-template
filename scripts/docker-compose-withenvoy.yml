@@ -60,12 +60,13 @@ services:
       - ${DBDATA_LOCATION_ROOT}:/var/lib/postgresql/data
   
   ecoloop-ml:
-    image: hanalooper/ecoloop-ml:latest
+    image: ${ECOLOOP_ML_IMAGE}
     container_name: ecoloop-ml-onprem
     environment:
       PORT: "80"
       SERVER_BAPI: http://ecoloop-server-onprem:3000
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LLAMA_PARSE_API_KEY: ${LLAMA_PARSE_API_KEY}
     ports:
       - ${ECOLOOP_ML_EXPOSE_PORT}:80
     networks:
