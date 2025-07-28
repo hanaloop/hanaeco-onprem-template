@@ -34,17 +34,19 @@ Initially the [Auth0](https://auth0.com/) can be setup until local auth is provi
 #### Configuration Points
 
 The deployment configuration is defined across multiple files:
-1. `scripts/.env.docker-compose-onprem` - Configuration for docker deployment, including docker images, ports, etc.
-2. `scripts/.env.docker-server` - Configuration for the API server application
-3. `scripts/.env.docker-web`  - Configuration for the web application 
-4. `scripts/.env.docker-ml`   - Configuration for the AI/ML application 
+
+1. `scripts/.env.docker-compose-onprem` - Main Docker Compose and service configuration (images, ports, storage, Auth0, ML, etc).
+2. `scripts/.env.docker-server` - Backend server configuration (database, Auth0, JWT, etc).
+3. `scripts/.env.docker-web`  - Web application configuration (API URLs, NextAuth, etc).
+
+**Note:** Most sensitive values (such as `OPENAI_API_KEY`, `CIPHER_KEY`, and `DB_PASSWORD`) can be set as environment variables at runtime for security, rather than hardcoding them in the `.env` files.
 
 **Deploying for a your.publicdomain.net**
 
 
 #### Environments in `scripts/.env.docker-server`
 
-The entries in the file are commented, you will need to uncomment to enable dhtem. 
+The entries in the file are commented; you will need to uncomment to enable them.
 
 
 
@@ -63,40 +65,46 @@ Where
 
 #### Environments to configure in `.env.docker-web`
 
-Environments to configure in `.env.docker-web`
-```
-NEXTAUTH_URL=<https://your.publicdomain.net>
-AUTH0_CLIENT_ID=<Auth0 IdP's client ID>
-AUTH0_CLIENT_SECRET=<Auth0 IdP's client secret>
-```
-Where
+Key variables in `.env.docker-web`:
 
-- `NEXTAUTH_URL` - The public domain name the platform will be servicing
-- `NEXTAUTH_URL_INTERNAL` - The internal URL. Without this, the login button may fail to render.
-- `AUTH0_CLIENT_ID` - Auth0's client ID
-- `AUTH0_CLIENT_SECRET` - Auth0's client secret
+```
+BAPI_BASE_URL=http://ecoloop-server-onprem:3000
+WEB_BASE_URL=http://localhost
+NEXTAUTH_URL=http://localhost
+NEXTAUTH_URL_INTERNAL=http://ecoloop-web-onprem
+```
 
-> NOTE: The platform was built to support Oauth spec, but only Auth0 has been fully tested to work. If you want to use different Oauth Provider, the platform may need further modification.
-> For now you can create a new account in Auth0 and provide the corresponding ID/secret.
+Where:
+
+- `BAPI_BASE_URL` - The backend API server URL (use the Docker network hostname).
+- `WEB_BASE_URL` - The base URL for the web app (typically `http://localhost` for local development).
+- `NEXTAUTH_URL` - The public domain or local URL for NextAuth (used for authentication redirects).
+- `NEXTAUTH_URL_INTERNAL` - The internal Docker network URL for NextAuth (required for login to work inside containers).
+
+> NOTE: The platform was built to support OAuth spec, but only Auth0 has been fully tested to work. If you want to use a different OAuth Provider, further modification may be needed.
+> For now, you can create a new account in Auth0 and provide the corresponding ID/secret.
 
 
 #### Deploying
 
-Once the configuration were properly set, you can modify the services-up.sh 
+Once the configuration is set, you can start the services as follows (from the `/scripts` directory):
 
 ```sh
-DB_PASSWORD=<DBPWD> docker-compose --env-file .env.docker-compose -f docker-compose-withenvoy.yml up
+OPENAI_API_KEY=<OPENAI_KEY> CIPHER_KEY=<CIPHER_KEY> DB_PASSWORD=<DBPWD> docker-compose --env-file .env.docker-compose-onprem -f docker-compose-withenvoy.yml up
 ```
 
-Where 
-- <DBPWD> is the password to be used for initial db creation.
+Where:
+- `<OPENAI_KEY>` is your OpenAI API key (for chatbot features).
+- `<CIPHER_KEY>` is a secret key for encryption (must match the value in `.env.docker-server`).
+- `<DBPWD>` is the database password (must match the value in both `.env.docker-compose-onprem` and `.env.docker-server`).
 
-Verify from the same local computer where the services have been deployed:
+To verify from the same local computer that the services have been successfully deployed:
+
 ```
-# Verify server is up
+# Verify backend server is up
 curl localhost/bapi/info
 
-# Verify web is up
+# Verify web frontend is up
 curl localhost/api/info
 ```
 
@@ -123,44 +131,38 @@ https://{hostname}/en/admin/users
 
 ## Troubleshooting deployment
 
-- If one of the server did not ran check it's log
+- If a service does not start, check its logs:
     ```
-    docker logs {container-name}
+    docker logs <container-name>
     ```
 
-- If the docker container is running, 
-
-    check if the variables are correcly set:
+- To check environment variables inside a running container:
     ```sh
     docker exec -it ecoloop-server-onprem printenv
     ```
 
-    Check if services can be accessed from the container
+- To test connectivity and service availability from within containers:
     ```sh
     docker exec -it ecoloop-web-onprem ash
-    [docker-container] curl ecoloop-server-onprem:3000/info
+    # Inside the container:
+    curl ecoloop-server-onprem:3000/info
     ```
 
     ```sh
     docker exec -it ecoloop-server-onprem ash
-    [docker-container] curl ecoloop-server-onprem:3000/info
+    # Inside the container:
+    curl ecoloop-server-onprem:3000/info
     ```
 
-- To see the logs of a container
-    
+- To follow logs of a container:
     ```
     docker logs --follow ecoloop-server-onprem
     ```
 
-- To see the networks
-    
+- To check Docker networks and connectivity:
     ```
     docker exec -it ecoloop-web-onprem ping ecoloop-server-onprem
-    
-    docker exec -it ecoloop-web-onprem ping ecoloop-server-onprem
-
     docker exec -it ecoloop-web-onprem ping ecoloop-ml-onprem
-
     docker network ls
     docker network inspect haneco_onprem_app_network
     ```
