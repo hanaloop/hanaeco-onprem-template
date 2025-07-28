@@ -43,13 +43,29 @@ In most of the cases the `docker-compose-withenvoy.yml` shouldn't need to be mod
 
 ## Running application
 
-* When application is not accessible (e.g. opening in browser to localhost) even when docker compose is up, check that all the servers are running, and none have died during start up (e.g. due to error).
+* If the application is not accessible (e.g. opening in browser to localhost) even when Docker Compose is up, check that all the servers are running and none have exited due to errors.
 
-  It is possible to check the registered server in docker network using:
+  You can check the registered servers in the Docker network using:
   ```sh
   docker network inspect haneco_onprem_app_network
   ```
 
+* To check logs for a specific container:
+  ```sh
+  docker logs <container-name>
+  ```
+
+* To verify environment variables inside a running container:
+  ```sh
+  docker exec -it ecoloop-server-onprem printenv
+  ```
+
+* To test connectivity from within a container:
+  ```sh
+  docker exec -it ecoloop-web-onprem ash
+  # Inside the container:
+  curl ecoloop-server-onprem:3000/info
+  ```
 
 ## Configuration
 

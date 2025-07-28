@@ -4,14 +4,18 @@ site_description: Documentation
 site_url: https://localhost:8000
 site_dir: target/mkdocs
 
-theme: readthedocs
+theme: 
+  name: readthedocs
+  features:
+    - search
+    - content.code.copy
 
 markdown_extensions:
   - admonition
 
 # Repo info for editing
 repo_name: GitLab
-repo_url: [TBD]
+# repo_url: [TBD]
 edit_uri: edit/master/docs/
 # Not needed for GitLab
 
