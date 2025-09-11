@@ -1,57 +1,89 @@
-# Deploying hanaeco
+# Deploying Hanaeco
 
-## Pre-requisite
+## Prerequisite
 
 The following are software required for deploying the system:
 
 - `git`
-- a text editor
 - `docker`
+- A text editor
 
-In addition, when using cloud-based IDP such as Auth0 relevant account and keys are required.
-And to use chatbot, an OpenAI API key is needed.
+Additionally:
 
-## Installation & Startup
+- If using a cloud-based Identity Provider (IDP) such as Auth0, you will need a valid account and API keys.
+- To enable the chatbot feature, an OpenAI API key is required. By default, the chatbot is disabled (HL_DISABLE_GENAI=true).
 
-1. Clone this repo
+## Installation & Quick Startup
+
+The installation is just cloning the 
+
+1. Clone this repository
 
     ```bash
     git clone <repository_url>
     cd <repository_directory>/scripts
     ```
 
-2. Modify the configuration as specified in the following [configuration](#configuration) section
-3. Run command `services-up.sh` on a unix based system or `services-up.bat` on windows
+2. Modify the settings as described in the [Quick Configuration](#quick_config) section.
+3. Start services 
+  - On Unix-based systems: `services-up.sh`
+  - On Windows:`services-up.bat` 
 
+> On the first startup, set IMPORT_FILE_PATTERN=. to load seed data.
+The initial data load may take up to 3 minutes.
+> After seeding is complete, reset IMPORT_FILE_PATTERN to an empty value to avoid re-importing.
 
-## Configuration
+## Quick Configuration
 
-Modify `/scripts/.env.docker-compose-onprem` file according to your environment:
+At a minimum, configure the following in `.env.docker-compose-onprem`.
+- `DBDATA_LOCATION_ROOT`  Absolute path for PostgreSQL persistent storage
+- `STORAGE_LOCATION_ROOT` Absolute path for file storage (requires write access)
+- `SEED_DATA_CONNECTORS_LOCATION` Absolute path for the connector seed data. The seed data is used by the GenAI service.
 
-- `AUTH0_ISSUER_URL`  The IDP provider's URL
-- `AUTH0_AUDIENCE`  The IDP provider's audience
-- `AUTH0_SECRET`  The IDP provider's secret key
-- `AUTH0_CLIENT_ID`  The IDP provider's client ID
-- `AUTH0_CLIENT_SECRET`  The IDP provider's client secret
+And services-up.sh/bat
+- `CIPHER_KEY` The cyphyer key for encryption/decryption
+- `DB_PASSWORD`= The DB password
+
+## Full Configuration
+
+Most configuration is handled via the `.env` files:
+  - [`scripts/.env.docker-compose-onprem`](../scripts/.env.docker-compose-onprem): Main Docker Compose and service configuration.
+  - [`scripts/.env.docker-server`](../scripts/.env.docker-server): Backend server configuration (database, Auth0, ML, etc).
+  - [`scripts/.env.docker-web`](../scripts/.env.docker-web): Web application configuration (API URLs, NextAuth, etc).
+
+Some sensitive values (such as `OPENAI_API_KEY`, `CIPHER_KEY`, and `DB_PASSWORD`) can be set either directly in the `.env` files or passed as environment variables when starting the services. For security, it is recommended to pass secrets as environment variables rather than hardcoding them in files.
+
+### Shared configuration `/scripts/.env.docker-compose-onprem`
+
+- `AUTH0_ISSUER_URL`  Auth0 IDP provider URL
+- `AUTH0_AUDIENCE`  Auth0 IDP audience
+- `AUTH0_SECRET`  Auth0 IDP provider's secret key
+- `AUTH0_CLIENT_ID`  Auth0 IDP provider's client ID
+- `AUTH0_CLIENT_SECRET`  Auth0 IDP provider's client secret
 - `SEED_DATA_CONNECTORS_LOCATION` The absolute path to the seed data connectors folder, e.g. on windows `C:\Users\username\hanaeco-onprem-template\hanaeco-seed-data-connectors`
-- `ECOLOOP_WEB_IMAGE` The Hanaeco web server docker image name with the proper version
-- `ECOLOOP_SERVER_IMAGE` The Hanaeco backend server docker image name with the proper version
+- `ECOLOOP_WEB_IMAGE` The Hanaeco web server docker image (with version)
+- `ECOLOOP_SERVER_IMAGE` The Hanaeco backend server docker image (with version)
 - `DBDATA_LOCATION_ROOT`  The absolute path where the database (Postgres) persistent files are stored
 - `STORAGE_LOCATION_ROOT` The absolute path where the updated file will be stored (need full write access)
-- `ECOLOOP_ML_IMAGE`  The Hanaeco machine learning docker image
-- `OPENAI_API_KEY` The OpenAI key for chat
+- `ECOLOOP_ML_IMAGE`  The Hanaeco machine learning docker image (with version)
+- `OPENAI_API_KEY` The OpenAI key for chat features (optional)
 - `DB_PASSWORD` The password to be used for initial db creation. This needs to be the same password as used in the DATABASE_URL in .env.docker-server 
 
-Modify `/scripts/.env.docker-server` file:
+### Backend server configuration `/scripts/.env.docker-server`
 
 - `JWT_SECRET` The secret key for JWT token if you want to use JWT for authentication
 - `DATABASE_URL` The database connection string. The default value is `postgresql://ecoloop:password@postgres-onprem:5432/ecoloop-onprem?schema=public&connection_limit=25`. Make sure to change the password to the one specified in .env.docker-compose-onprem
+
+
 ## Starting and stopping Hanaeco
 
+Prior starting the applications, make sure all the ports are available: 80 (http), 5432 (postgres)
+
+The scripts are located in `/scripts` folder
+
 ### On a unix based system
+
 #### Start
-Prior starting the applications, make sure:
-1. All the ports are available: 80 (http), 5432 (postgres)
 
 Go to `/scripts`
 
@@ -70,8 +102,6 @@ Go to `/scripts`
 ### On windows
 
 #### Start
-Prior starting the applications, make sure:
-1. All the ports are available: 80 (http), 5432 (postgres)
 
 Go to `/scripts`
 
@@ -88,21 +118,13 @@ services-down.bat
 
 ### Deploying
 
-Once you have finished configuring the `.env` files, you can deploy the system using the provided scripts.
+#### Start / Stop scripts
 
-#### Environment Variables
+The start/stop script basically does a docker compose up and down.
 
-- Most configuration is handled via the `.env` files:
-  - [`scripts/.env.docker-compose-onprem`](../scripts/.env.docker-compose-onprem): Main Docker Compose and service configuration.
-  - [`scripts/.env.docker-server`](../scripts/.env.docker-server): Backend server configuration (database, Auth0, ML, etc).
-  - [`scripts/.env.docker-web`](../scripts/.env.docker-web): Web application configuration (API URLs, NextAuth, etc).
+The script passes environment variables, which it is recommended to be pass as environment (eg. using export).
 
-- Some sensitive values (such as `OPENAI_API_KEY`, `CIPHER_KEY`, and `DB_PASSWORD`) can be set either directly in the `.env` files or passed as environment variables when starting the services. For security, it is recommended to pass secrets as environment variables rather than hardcoding them in files.
-
-#### Starting the Services
-
-On Unix-based systems, from the `/scripts` directory:
-
+On unix-based, the script looks like:
 ```sh
 OPENAI_API_KEY=<OPENAI_KEY> CIPHER_KEY=<CIPHER_KEY> DB_PASSWORD=<DBPWD> docker-compose --env-file .env.docker-compose-onprem -f docker-compose-withenvoy.yml up
 ```
@@ -118,31 +140,20 @@ Alternatively, you can use the provided scripts:
 - `services-up.sh` (Unix)
 - `services-up.bat` (Windows)
 
-#### Verifying Deployment
+
+#### Verifying Services
 
 To verify that the services are running correctly, from the same local computer:
 
 ```sh
 # Verify backend server is up
-curl localhost/bapi/info
+curl http://localhost/bapi/info
 
 # Verify web frontend is up
-curl localhost/api/info
+curl http://localhost/api/info
 ```
 
 If you receive valid responses, the deployment was successful.
-
-#### Stopping the Services
-
-On Unix:
-```sh
-./services-down.sh
-```
-
-On Windows:
-```bat
-services-down.bat
-```
 
 #### Notes
 
