@@ -13,7 +13,7 @@ Additionally:
 - If using a cloud-based Identity Provider (IDP) such as Auth0, you will need a valid account and API keys.
 - To enable the chatbot feature, an OpenAI API key is required. By default, the chatbot is disabled (HL_DISABLE_GENAI=true).
 
-## Installation & Quick Startup
+## Installation, Quick Configuration and Server Start
 
 The installation is just cloning the 
 
@@ -24,16 +24,7 @@ The installation is just cloning the
     cd <repository_directory>/scripts
     ```
 
-2. Modify the settings as described in the [Quick Configuration](#quick_config) section.
-3. Start services 
-  - On Unix-based systems: `services-up.sh`
-  - On Windows:`services-up.bat` 
-
-> On the first startup, set IMPORT_FILE_PATTERN=. to load seed data.
-The initial data load may take up to 3 minutes.
-> After seeding is complete, reset IMPORT_FILE_PATTERN to an empty value to avoid re-importing.
-
-## Quick Configuration
+2. Minimal configuration
 
 At a minimum, configure the following in `.env.docker-compose-onprem`.
 - `DBDATA_LOCATION_ROOT`  Absolute path for PostgreSQL persistent storage
@@ -43,6 +34,21 @@ At a minimum, configure the following in `.env.docker-compose-onprem`.
 And services-up.sh/bat
 - `CIPHER_KEY` The cyphyer key for encryption/decryption
 - `DB_PASSWORD`= The DB password
+
+3. Start services 
+  - On Unix-based systems: `services-up.sh`
+  - On Windows:`services-up.bat` 
+
+> On the first startup, set IMPORT_FILE_PATTERN=. to load seed data.
+The initial data load may take up to 3 minutes.
+> After seeding is complete, reset IMPORT_FILE_PATTERN to an empty value to avoid re-importing.
+
+4. Test the application
+
+  - Open a browser to http://localhost
+  - Register the first user as host using the same email as specified in `HOST_EMAILS` environment, in the `.env.docker-server` file
+
+
 
 ## Full Configuration
 

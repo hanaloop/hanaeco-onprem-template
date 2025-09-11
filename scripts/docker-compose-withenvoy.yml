@@ -61,7 +61,18 @@ services:
       - 5432:5432
     volumes:
       - ${DBDATA_LOCATION_ROOT}:/var/lib/postgresql/data
-  
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"   # MQTT
+    command: mosquitto -c /mosquitto-no-auth.conf
+    networks:
+      - app_network
+    profiles: ["mqtt"]
+
   ecoloop-ml:
     image: ${ECOLOOP_ML_IMAGE}
     container_name: ecoloop-ml-onprem
