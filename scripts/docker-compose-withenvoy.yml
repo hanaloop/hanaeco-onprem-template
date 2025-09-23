@@ -69,6 +69,8 @@ services:
     ports:
       - "1883:1883"   # MQTT
     command: mosquitto -c /mosquitto-no-auth.conf
+    # volumes:
+    #   - ${MOSQUITTO_ROOT:-../infrastructure/mqtt}:/mosquitto
     networks:
       - app_network
     profiles: ["mqtt"]

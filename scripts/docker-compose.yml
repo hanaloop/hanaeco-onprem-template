@@ -62,6 +62,11 @@ services:
     ports:
       - "1883:1883"   # MQTT
     command: mosquitto -c /mosquitto-no-auth.conf
+    # volumes:
+    #   - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    #   - ./mosquitto_passwd:/mosquitto/config/mosquitto_passwd
+    #   - ./data:/mosquitto/data
+    #   - ./log:/mosquitto/log
     networks:
       - webnet
     profiles: ["mqtt"]

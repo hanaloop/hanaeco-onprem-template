@@ -35,6 +35,9 @@ And services-up.sh/bat
 - `CIPHER_KEY` The cyphyer key for encryption/decryption
 - `DB_PASSWORD`= The DB password
 
+And make sure the password in DB_PASSWORD matches the password in set in `.env.docker-server`
+
+
 3. Start services 
   - On Unix-based systems: `services-up.sh`
   - On Windows:`services-up.bat` 
