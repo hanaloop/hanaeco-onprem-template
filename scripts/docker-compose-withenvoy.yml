@@ -109,6 +109,9 @@ services:
       - app_network
     ports:
       - ${ECOLOOP_WEB_EXPOSE_PORT}:80
+    depends_on:
+      - ecoloop-server
+
 
 networks:
   app_network:
