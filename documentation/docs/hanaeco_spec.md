@@ -68,10 +68,10 @@ Where
 Key variables in `.env.docker-web`:
 
 ```
-BAPI_BASE_URL=http://ecoloop-server-onprem:3000
+BAPI_BASE_URL=http://hanaeco-server-onprem:3000
 WEB_BASE_URL=http://localhost
 NEXTAUTH_URL=http://localhost
-NEXTAUTH_URL_INTERNAL=http://ecoloop-web-onprem
+NEXTAUTH_URL_INTERNAL=http://hanaeco-web-onprem
 ```
 
 Where:
@@ -116,7 +116,7 @@ Once logged in for the first time, you can and access the database using postgre
 
 ```sh
 docker exec -it postgres-onprem sh
-psql -h localhost -p 5432 -d ecoloop-onprem -U ecoloop
+psql -h localhost -p 5432 -d hanaeco-onprem -U hanaeco
 ```
 
 ```sql
@@ -138,31 +138,31 @@ https://{hostname}/en/admin/users
 
 - To check environment variables inside a running container:
     ```sh
-    docker exec -it ecoloop-server-onprem printenv
+    docker exec -it hanaeco-server-onprem printenv
     ```
 
 - To test connectivity and service availability from within containers:
     ```sh
-    docker exec -it ecoloop-web-onprem ash
+    docker exec -it hanaeco-web-onprem ash
     # Inside the container:
-    curl ecoloop-server-onprem:3000/info
+    curl hanaeco-server-onprem:3000/info
     ```
 
     ```sh
-    docker exec -it ecoloop-server-onprem ash
+    docker exec -it hanaeco-server-onprem ash
     # Inside the container:
-    curl ecoloop-server-onprem:3000/info
+    curl hanaeco-server-onprem:3000/info
     ```
 
 - To follow logs of a container:
     ```
-    docker logs --follow ecoloop-server-onprem
+    docker logs --follow hanaeco-server-onprem
     ```
 
 - To check Docker networks and connectivity:
     ```
-    docker exec -it ecoloop-web-onprem ping ecoloop-server-onprem
-    docker exec -it ecoloop-web-onprem ping ecoloop-ml-onprem
+    docker exec -it hanaeco-web-onprem ping hanaeco-server-onprem
+    docker exec -it hanaeco-web-onprem ping hanaeco-ml-onprem
     docker network ls
     docker network inspect haneco_onprem_app_network
     ```

@@ -70,18 +70,18 @@ Some sensitive values (such as `OPENAI_API_KEY`, `CIPHER_KEY`, and `DB_PASSWORD`
 - `AUTH0_CLIENT_ID`  Auth0 IDP provider's client ID
 - `AUTH0_CLIENT_SECRET`  Auth0 IDP provider's client secret
 - `SEED_DATA_CONNECTORS_LOCATION` The absolute path to the seed data connectors folder, e.g. on windows `C:\Users\username\hanaeco-onprem-template\hanaeco-seed-data-connectors`
-- `ECOLOOP_WEB_IMAGE` The Hanaeco web server docker image (with version)
-- `ECOLOOP_SERVER_IMAGE` The Hanaeco backend server docker image (with version)
+- `HANAECO_WEB_IMAGE` The Hanaeco web server docker image (with version)
+- `HANAECO_SERVER_IMAGE` The Hanaeco backend server docker image (with version)
 - `DBDATA_LOCATION_ROOT`  The absolute path where the database (Postgres) persistent files are stored
 - `STORAGE_LOCATION_ROOT` The absolute path where the updated file will be stored (need full write access)
-- `ECOLOOP_ML_IMAGE`  The Hanaeco machine learning docker image (with version)
+- `HANAECO_ML_IMAGE`  The Hanaeco machine learning docker image (with version)
 - `OPENAI_API_KEY` The OpenAI key for chat features (optional)
 - `DB_PASSWORD` The password to be used for initial db creation. This needs to be the same password as used in the DATABASE_URL in .env.docker-server 
 
 ### Backend server configuration `/scripts/.env.docker-server`
 
 - `JWT_SECRET` The secret key for JWT token if you want to use JWT for authentication
-- `DATABASE_URL` The database connection string. The default value is `postgresql://ecoloop:password@postgres-onprem:5432/ecoloop-onprem?schema=public&connection_limit=25`. Make sure to change the password to the one specified in .env.docker-compose-onprem
+- `DATABASE_URL` The database connection string. The default value is `postgresql://hanaeco:password@postgres-onprem:5432/hanaeco-onprem?schema=public&connection_limit=25`. Make sure to change the password to the one specified in .env.docker-compose-onprem
 
 
 ## Starting and stopping Hanaeco

@@ -12,11 +12,11 @@
 
   E.g. when `FLAG=hello ./services-up.sh` is ran, the FLAG environment will be be automatically passed to the docker container unless it is specified in docker compose yaml file's `environment:` context. 
 
-*  The ecoloop-web have a `NEXT_PUBLIC_BAPI_BASE_URL` needs to be set to the Backed API (server) in the front-end code. 
+*  The hanaeco-web have a `NEXT_PUBLIC_BAPI_BASE_URL` needs to be set to the Backed API (server) in the front-end code. 
   
   - This parameter is set to the full URL then client and server uses completely different origin. 
   - When same origin is used, then a relative path from the host is used, e.g. `/bapi`
-  - FYI: The ecoloop-server has no particular build parameter.
+  - FYI: The hanaeco-server has no particular build parameter.
 
 * To build and push the images, `./docker.sh --build --push` script can be used. Depending on the CPU architecture, you can pass `-variation=arm`.
 
@@ -29,7 +29,7 @@ There are various configuration three files:
   - `DB_USERNAME` - The initial DB user
   - `DB_PASSWORD` - The initial DB user's password (suggested to set this in-memory environment for security)
   - `DB_DATABASE_NAME` - initial DB name
-  - `ECOLOOP_WEB_IMAGE`, `ECOLOOP_SERVER_IMAGE` - If you need to change the version
+  - `HANAECO_WEB_IMAGE`, `HANAECO_SERVER_IMAGE` - If you need to change the version
   - `AUTH0_ISSUER_URL`, `AUTH0_AUDIENCE` - If you are using different Auth0 configuration
 
 * `.env.docker-server` - The backend server related config
@@ -57,19 +57,19 @@ In most of the cases the `docker-compose-withenvoy.yml` shouldn't need to be mod
 
 * To verify environment variables inside a running container:
   ```sh
-  docker exec -it ecoloop-server-onprem printenv
+  docker exec -it hanaeco-server-onprem printenv
   ```
 
 * To test connectivity from within a container:
   ```sh
-  docker exec -it ecoloop-web-onprem ash
+  docker exec -it hanaeco-web-onprem ash
   # Inside the container:
-  curl ecoloop-server-onprem:3000/info
+  curl hanaeco-server-onprem:3000/info
   ```
 
 ## Configuration
 
-- Once the application is started, if you do not see the login button, then you will need to fix the `NEXTAUTH_URL_INTERNAL` in the `.env.docker-web`. It should be set to the docker network's name, e.g. `http://ecoloop-web-onprem`
+- Once the application is started, if you do not see the login button, then you will need to fix the `NEXTAUTH_URL_INTERNAL` in the `.env.docker-web`. It should be set to the docker network's name, e.g. `http://hanaeco-web-onprem`
 
 
 ## Staring the application
